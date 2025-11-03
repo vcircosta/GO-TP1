@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -11,42 +12,63 @@ func resetContacts() {
 	contacts = make(map[int]Contact)
 }
 
-func TestAddContact(t *testing.T) {
+func setTestContact() {
 	resetContacts()
-	addContact(1, "Alice", "alice@example.com")
+
+	contacts[1] = Contact{ID: 1, Name: "Alice", Email: "alice@example.com"}
+}
+
+func TestAddContact(t *testing.T) { //okay
+	fmt.Println("AddContact ---------------------------")
+
+	resetContacts()
+	addContact("Alice", "alice@example.com")
 
 	if c, ok := contacts[1]; !ok {
 		t.Error("Contact non ajouté")
+		fmt.Println("-> KO")
 	} else if c.Name != "Alice" || c.Email != "alice@example.com" {
 		t.Error("Les informations du contact sont incorrectes")
+		fmt.Println("-> KO")
+	} else {
+		fmt.Println("-> OK")
 	}
 }
 
 func TestDeleteContact(t *testing.T) {
-	resetContacts()
-	addContact(2, "Bob", "bob@example.com")
-	delete(contacts, 2)
+	fmt.Println("DeleteContact ------------------------")
 
-	if _, ok := contacts[2]; ok {
+	setTestContact()
+	delete(contacts, 1)
+
+	if _, ok := contacts[1]; ok {
 		t.Error("Le contact n'a pas été supprimé")
+		fmt.Println("-> KO")
+	} else {
+		fmt.Println("-> OK")
 	}
 }
 
 func TestUpdateContact(t *testing.T) {
-	resetContacts()
-	addContact(3, "Charlie", "charlie@example.com")
+	fmt.Println("UpdateContact -------------------------")
 
-	contacts[3] = Contact{ID: 3, Name: "Charlie Updated", Email: "charlie2@example.com"}
+	setTestContact()
 
-	c, _ := contacts[3]
+	contacts[1] = Contact{ID: 1, Name: "Charlie Updated", Email: "charlie2@example.com"}
+
+	c, _ := contacts[1]
 	if c.Name != "Charlie Updated" || c.Email != "charlie2@example.com" {
 		t.Error("Le contact n'a pas été mis à jour correctement")
+		fmt.Println("-> KO")
+	} else {
+		fmt.Println("-> OK")
 	}
 }
 
 func TestListContacts(t *testing.T) {
-	resetContacts()
-	addContact(4, "David", "david@example.com")
+	fmt.Println("ListContacts -------------------------")
+
+	setTestContact()
 
 	var buf bytes.Buffer
 	stdout := os.Stdout
@@ -61,7 +83,10 @@ func TestListContacts(t *testing.T) {
 	os.Stdout = stdout
 
 	output := buf.String()
-	if output == "" || !strings.Contains(output, "David") {
+	if output == "" || !strings.Contains(output, "Alice") {
 		t.Error("Liste des contacts incorrecte")
+		fmt.Println("-> KO")
+	} else {
+		fmt.Println("-> OK")
 	}
 }
