@@ -25,6 +25,9 @@ func main() {
 	emailFlag := flag.String("email", "", "Email du contact")
 	flag.Parse()
 
+	addContact(1, "Alice", "alice@example.com")
+	addContact(2, "Bob", "bob@example.com")
+
 	if *idFlag != 0 && *nameFlag != "" && *emailFlag != "" {
 		addContact(*idFlag, *nameFlag, *emailFlag)
 	}
