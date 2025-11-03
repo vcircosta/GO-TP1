@@ -20,16 +20,15 @@ var contacts = make(map[int]Contact)
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	idFlag := flag.Int("id", 0, "ID du contact")
 	nameFlag := flag.String("name", "", "Nom du contact")
 	emailFlag := flag.String("email", "", "Email du contact")
 	flag.Parse()
 
-	addContact(1, "Alice", "alice@example.com")
-	addContact(2, "Bob", "bob@example.com")
+	addContact("Alice", "alice@example.com")
+	addContact("Bob", "bob@example.com")
 
-	if *idFlag != 0 && *nameFlag != "" && *emailFlag != "" {
-		addContact(*idFlag, *nameFlag, *emailFlag)
+	if *nameFlag != "" && *emailFlag != "" {
+		addContact(*nameFlag, *emailFlag)
 	}
 
 	for {
@@ -68,28 +67,16 @@ func main() {
 }
 
 func handleAddContact() {
-	fmt.Print("ID: ")
-	idStr, _ := reader.ReadString('\n')
-	id, err := strconv.Atoi(strings.TrimSpace(idStr))
-	if err != nil {
-		fmt.Println("ID invalide")
-		return
-	}
-
-	if _, ok := contacts[id]; ok {
-		fmt.Println("Un contact avec cet ID existe déjà")
-		return
-	}
-
 	fmt.Print("Nom: ")
 	name, _ := reader.ReadString('\n')
 	fmt.Print("Email: ")
 	email, _ := reader.ReadString('\n')
 
-	addContact(id, strings.TrimSpace(name), strings.TrimSpace(email))
+	addContact(strings.TrimSpace(name), strings.TrimSpace(email))
 }
 
-func addContact(id int, name, email string) {
+func addContact(name string, email string) {
+	id := len(contacts) + 1
 	contacts[id] = Contact{ID: id, Name: name, Email: email}
 	fmt.Println("Contact ajouté avec succès !")
 }
@@ -106,7 +93,14 @@ func listContacts() {
 }
 
 func handleDeleteContact() {
-	fmt.Print("ID du contact à supprimer: ")
+
+	if len(contacts) == 0 {
+		fmt.Println("Aucun contact à supprimer")
+		return
+	}
+
+	listContacts()
+	fmt.Print("\nID du contact à supprimer: ")
 	idStr, _ := reader.ReadString('\n')
 	id, err := strconv.Atoi(strings.TrimSpace(idStr))
 	if err != nil {
@@ -123,7 +117,13 @@ func handleDeleteContact() {
 }
 
 func handleUpdateContact() {
-	fmt.Print("ID du contact à mettre à jour: ")
+	if len(contacts) == 0 {
+		fmt.Println("Aucun contact à supprimer")
+		return
+	}
+
+	listContacts()
+	fmt.Print("\nID du contact à mettre à jour: ")
 	idStr, _ := reader.ReadString('\n')
 	id, err := strconv.Atoi(strings.TrimSpace(idStr))
 	if err != nil {
