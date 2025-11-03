@@ -3,6 +3,10 @@
 Un petit CRM (Customer Relationship Management) en ligne de commande développé en Go.
 Il permet de gérer des contacts avec des fonctionnalités simples : ajout, mise à jour, suppression, listing, et ajout via flags.
 
+## Membres du groupe
+
+Elise LABARRERE
+Valentin CIRCOSTA
 
 ## Fonctionnalités
 
