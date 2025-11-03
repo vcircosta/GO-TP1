@@ -1,10 +1,10 @@
-#Mini-CRM en Go (CLI)
+# Mini-CRM en Go (CLI)
 
 Un petit CRM (Customer Relationship Management) en ligne de commande développé en Go.
 Il permet de gérer des contacts avec des fonctionnalités simples : ajout, mise à jour, suppression, listing, et ajout via flags.
 
 
-##Fonctionnalités
+## Fonctionnalités
 
 Afficher un menu interactif en boucle
 
@@ -19,7 +19,7 @@ Mettre à jour un contact
 Quitter l’application
 
 
-##Concepts Go utilisés
+## Concepts Go utilisés
 
 Boucle infinie for {} pour le menu
 
@@ -36,7 +36,7 @@ Lecture de l’entrée utilisateur avec bufio.Reader et os.Stdin
 Flags avec le package flag pour l’ajout rapide
 
 
-##Installation et lancement
+## Installation et lancement
 
 Cloner le projet
  ```
