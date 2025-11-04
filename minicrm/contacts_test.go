@@ -1,4 +1,4 @@
-package main
+package minicrm
 
 import (
 	"bytes"
@@ -10,19 +10,18 @@ import (
 
 func resetContacts() {
 	contacts = make(map[int]Contact)
+	lastID = 0
 }
 
 func setTestContact() {
 	resetContacts()
-
-	contacts[1] = Contact{ID: 1, Name: "Alice", Email: "alice@example.com"}
+	NewContact("Alice", "alice@example.com")
 }
 
-func TestAddContact(t *testing.T) { //okay
-	fmt.Println("AddContact ---------------------------")
+func TestAddContact(t *testing.T) {
+	fmt.Print("AddContact ---------------------------")
 
-	resetContacts()
-	addContact("Alice", "alice@example.com")
+	setTestContact()
 
 	if c, ok := contacts[1]; !ok {
 		t.Error("Contact non ajouté")
@@ -36,10 +35,10 @@ func TestAddContact(t *testing.T) { //okay
 }
 
 func TestDeleteContact(t *testing.T) {
-	fmt.Println("DeleteContact ------------------------")
+	fmt.Print("DeleteContact ------------------------")
 
 	setTestContact()
-	delete(contacts, 1)
+	DeleteContact(1)
 
 	if _, ok := contacts[1]; ok {
 		t.Error("Le contact n'a pas été supprimé")
@@ -50,11 +49,11 @@ func TestDeleteContact(t *testing.T) {
 }
 
 func TestUpdateContact(t *testing.T) {
-	fmt.Println("UpdateContact -------------------------")
+	fmt.Print("UpdateContact ------------------------")
 
 	setTestContact()
 
-	contacts[1] = Contact{ID: 1, Name: "Charlie Updated", Email: "charlie2@example.com"}
+	UpdateContact(1, "Charlie Updated", "charlie2@example.com")
 
 	c, _ := contacts[1]
 	if c.Name != "Charlie Updated" || c.Email != "charlie2@example.com" {
@@ -66,7 +65,7 @@ func TestUpdateContact(t *testing.T) {
 }
 
 func TestListContacts(t *testing.T) {
-	fmt.Println("ListContacts -------------------------")
+	fmt.Print("ListContacts -------------------------")
 
 	setTestContact()
 
@@ -75,11 +74,10 @@ func TestListContacts(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	listContacts()
+	ListContacts()
 
 	w.Close()
 	buf.ReadFrom(r)
-
 	os.Stdout = stdout
 
 	output := buf.String()

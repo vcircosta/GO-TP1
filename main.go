@@ -2,41 +2,24 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
+
+	"github.com/vcircosta/GO-TP1/minicrm"
 )
-
-type Contact struct {
-	ID    int
-	Name  string
-	Email string
-}
-
-var contacts = make(map[int]Contact)
 
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	nameFlag := flag.String("name", "", "Nom du contact")
-	emailFlag := flag.String("email", "", "Email du contact")
-	flag.Parse()
-
-	addContact("Alice", "alice@example.com")
-	addContact("Bob", "bob@example.com")
-
-	if *nameFlag != "" && *emailFlag != "" {
-		addContact(*nameFlag, *emailFlag)
-	}
+	minicrm.SetTestContacts()
 
 	for {
-		fmt.Println("\n--- Mini CRM ---")
+		fmt.Println("\n--- Mini CRM 2.0 du Turfu ---")
 		fmt.Println("1. Ajouter un contact")
 		fmt.Println("2. Lister tous les contacts")
-		fmt.Println("3. Supprimer un contact")
-		fmt.Println("4. Mettre à jour un contact")
+		fmt.Println("3. Mettre à jour un contact")
+		fmt.Println("4. Supprimer un contact")
 		fmt.Println("5. Quitter")
 		fmt.Print("Choix: ")
 
@@ -46,109 +29,20 @@ func main() {
 			continue
 		}
 
-		choice := strings.TrimSpace(input)
-
-		switch choice {
+		switch strings.TrimSpace(input) {
 		case "1":
-			handleAddContact()
+			minicrm.HandleNewContact()
 		case "2":
-			listContacts()
+			minicrm.ListContacts()
 		case "3":
-			handleDeleteContact()
+			minicrm.HandleUpdateContact()
 		case "4":
-			handleUpdateContact()
+			minicrm.HandleDeleteContact()
 		case "5":
 			fmt.Println("Au revoir !")
 			return
 		default:
 			fmt.Println("Choix invalide")
 		}
-	}
-}
-
-func handleAddContact() {
-	fmt.Print("Nom: ")
-	name, _ := reader.ReadString('\n')
-	fmt.Print("Email: ")
-	email, _ := reader.ReadString('\n')
-
-	addContact(strings.TrimSpace(name), strings.TrimSpace(email))
-}
-
-func addContact(name string, email string) {
-	id := len(contacts) + 1
-	contacts[id] = Contact{ID: id, Name: name, Email: email}
-	fmt.Println("Contact ajouté avec succès !")
-}
-
-func listContacts() {
-	if len(contacts) == 0 {
-		fmt.Println("Aucun contact")
-		return
-	}
-	fmt.Println("\nListe des contacts :")
-	for _, c := range contacts {
-		fmt.Printf("ID: %d, Nom: %s, Email: %s\n", c.ID, c.Name, c.Email)
-	}
-}
-
-func handleDeleteContact() {
-
-	if len(contacts) == 0 {
-		fmt.Println("Aucun contact à supprimer")
-		return
-	}
-
-	listContacts()
-	fmt.Print("\nID du contact à supprimer: ")
-	idStr, _ := reader.ReadString('\n')
-	id, err := strconv.Atoi(strings.TrimSpace(idStr))
-	if err != nil {
-		fmt.Println("ID invalide")
-		return
-	}
-
-	if _, ok := contacts[id]; ok {
-		delete(contacts, id)
-		fmt.Println("Contact supprimé")
-	} else {
-		fmt.Println("Aucun contact avec cet ID")
-	}
-}
-
-func handleUpdateContact() {
-	if len(contacts) == 0 {
-		fmt.Println("Aucun contact à supprimer")
-		return
-	}
-
-	listContacts()
-	fmt.Print("\nID du contact à mettre à jour: ")
-	idStr, _ := reader.ReadString('\n')
-	id, err := strconv.Atoi(strings.TrimSpace(idStr))
-	if err != nil {
-		fmt.Println("ID invalide")
-		return
-	}
-
-	if c, ok := contacts[id]; ok {
-		fmt.Printf("Nom actuel (%s), appuyez sur Entrée pour garder: ", c.Name)
-		name, _ := reader.ReadString('\n')
-		name = strings.TrimSpace(name)
-		if name == "" {
-			name = c.Name
-		}
-
-		fmt.Printf("Email actuel (%s), appuyez sur Entrée pour garder: ", c.Email)
-		email, _ := reader.ReadString('\n')
-		email = strings.TrimSpace(email)
-		if email == "" {
-			email = c.Email
-		}
-
-		contacts[id] = Contact{ID: id, Name: name, Email: email}
-		fmt.Println("Contact mis à jour !")
-	} else {
-		fmt.Println("Aucun contact avec cet ID")
 	}
 }
