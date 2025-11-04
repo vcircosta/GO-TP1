@@ -33,12 +33,11 @@ cd GO-TP1
 
 Lancer le projet :
 ```
-go run .
+go run ./cmd/crm
 ```
 
 Lancer les tests du mini-crm :
 
 ```
-cd minicrm
-go test
+go test ./internal/storage -v
 ```
