@@ -15,7 +15,7 @@ func Run(store storage.Storer) {
 	setTestContacts(store)
 
 	for {
-		fmt.Println("\n--- Mini CRM 2.1 du Turfu ---")
+		fmt.Println("\n--- Mini CRM 3.0 du Turfu ---")
 		fmt.Println("1. Ajouter un contact")
 		fmt.Println("2. Lister tous les contacts")
 		fmt.Println("3. Mettre à jour un contact")
