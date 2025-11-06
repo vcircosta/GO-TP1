@@ -41,3 +41,18 @@ Lancer les tests du mini-crm :
 ```
 go test ./internal/storage -v
 ```
+
+## Initalisation de cobra
+
+Installer les changements
+```
+go mod tidy
+```
+
+Exemples d'utilisation
+```
+go run ./cmd/crm add "John Doe" "john@example.com"
+go run ./cmd/crm list
+go run ./cmd/crm update 1 "John Smith" "john.smith@example.com"
+go run ./cmd/crm delete 1
+```
