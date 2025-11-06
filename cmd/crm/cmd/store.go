@@ -5,16 +5,29 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/vcircosta/GO-TP1/internal/config"
 	"github.com/vcircosta/GO-TP1/internal/storage"
 )
 
 func initStore() storage.Storer {
-	// Récupère les valeurs depuis les flags rootCmd si présents, sinon depuis les env vars, sinon valeurs par défaut.
+	// charge la config si présente (ne fait pas fail hard)
+	var cfg *config.Config
+	if c, err := config.LoadConfig(); err == nil {
+		cfg = c
+	} else {
+		if verbose {
+			log.Printf("Aucun fichier de config chargé: %v", err)
+		}
+	}
+
+	// priorité : flag -> env -> config -> défaut
 	storageType := "json"
 	if f := rootCmd.PersistentFlags().Lookup("storage"); f != nil && f.Value.String() != "" {
 		storageType = f.Value.String()
 	} else if v := os.Getenv("CRM_STORAGE_TYPE"); v != "" {
 		storageType = v
+	} else if cfg != nil && cfg.Storage.Type != "" {
+		storageType = cfg.Storage.Type
 	}
 
 	dir := "data"
@@ -22,6 +35,8 @@ func initStore() storage.Storer {
 		dir = f.Value.String()
 	} else if v := os.Getenv("CRM_DATA_DIR"); v != "" {
 		dir = v
+	} else if cfg != nil && cfg.Storage.DataDir != "" {
+		dir = cfg.Storage.DataDir
 	}
 
 	sqliteFile := "contacts.db"
@@ -29,6 +44,8 @@ func initStore() storage.Storer {
 		sqliteFile = f.Value.String()
 	} else if v := os.Getenv("CRM_SQLITE_FILE"); v != "" {
 		sqliteFile = v
+	} else if cfg != nil && cfg.Storage.SQLiteFile != "" {
+		sqliteFile = cfg.Storage.SQLiteFile
 	}
 
 	verboseFlag := false

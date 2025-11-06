@@ -1,0 +1,5 @@
+storage:
+  type: gorm          # "gorm", "json" ou "memory"
+  data_dir: data
+  contacts_file: contacts.json
+  sqlite_file: contacts.db
