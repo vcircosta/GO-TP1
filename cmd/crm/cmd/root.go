@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,23 +12,20 @@ import (
 )
 
 var (
-	dataDir string
-	useJSON bool
-	verbose bool
+	dataDir     string
+	storageType string
+	sqliteFile  string
+	verbose     bool
+
 	rootCmd = &cobra.Command{
 		Use:   "crm",
 		Short: "Mini CRM - Gestionnaire de contacts",
 		Long: `Mini CRM est un gestionnaire de contacts en ligne de commande.
-Il permet d'ajouter, lister, mettre à jour et supprimer des contacts.
-		
-Exemple d'utilisation:
-  crm                    # Lance le mode interactif
-  crm add                # Ajoute un contact
-  crm list               # Liste tous les contacts
-  crm update <id>        # Met à jour un contact
-  crm delete <id>        # Supprime un contact`,
+Il permet d'ajouter, lister, mettre à jour et supprimer des contacts.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			// s'assure que dataDir existe
+			// Choix du store via flag --storage (ou valeur par défaut "json")
+			log.Printf("Type de stockage choisi: %s", storageType)
+
 			if err := os.MkdirAll(dataDir, 0o755); err != nil {
 				log.Fatalf("Erreur lors de la création du dossier %s: %v", dataDir, err)
 			}
@@ -37,15 +33,23 @@ Exemple d'utilisation:
 			var store storage.Storer
 			var err error
 
-			if useJSON {
+			switch storageType {
+			case "gorm":
+				dbPath := filepath.Join(dataDir, sqliteFile)
+				store, err = storage.NewGormStore(dbPath)
+				if err != nil {
+					log.Fatalf("Erreur init GORM store: %v", err)
+				}
+				log.Printf("Utilisation GORM avec SQLite: %s", dbPath)
+			case "json":
 				jsonFile := filepath.Join(dataDir, "contacts.json")
 				store, err = storage.NewJSONStore(jsonFile)
 				if err != nil {
-					log.Fatalf("Erreur lors de l'initialisation du store JSON: %v", err)
+					log.Fatalf("Erreur init JSON store: %v", err)
 				}
-				fmt.Printf("Utilisation du fichier: %s\n\n", jsonFile)
-			} else {
-				fmt.Println("Utilisation du stockage en mémoire")
+				log.Printf("Utilisation JSON: %s", jsonFile)
+			default:
+				log.Printf("Type de stockage inconnu (%s), utilisation mémoire", storageType)
 				store = storage.NewMemoryStore()
 			}
 
@@ -63,6 +67,7 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&dataDir, "data-dir", "data", "répertoire des données")
-	rootCmd.PersistentFlags().BoolVar(&useJSON, "json", true, "utiliser le store JSON (data/contacts.json)")
+	rootCmd.PersistentFlags().StringVar(&storageType, "storage", "json", "type de stockage: json|gorm|memory")
+	rootCmd.PersistentFlags().StringVar(&sqliteFile, "sqlite-file", "contacts.db", "nom du fichier sqlite (utilisé si --storage=gorm)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "mode verbeux")
 }
