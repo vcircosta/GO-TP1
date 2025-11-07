@@ -13,14 +13,17 @@ func initStore() storage.Storer {
 	storageType := "json"
 
 	const configFile = "config_storage.txt"
+
 	if data, err := os.ReadFile(configFile); err == nil {
 		storageType = strings.TrimSpace(string(data))
 	}
 
-	if f := rootCmd.PersistentFlags().Lookup("storage"); f != nil && f.Value.String() != "" {
-		storageType = f.Value.String()
-	} else if v := os.Getenv("CRM_STORAGE_TYPE"); v != "" {
-		storageType = v
+	if flag := rootCmd.Flag("storage"); flag != nil && flag.Changed {
+		storageType = flag.Value.String()
+
+		if err := os.WriteFile(configFile, []byte(storageType), 0644); err != nil {
+			log.Fatalf("Impossible de sauvegarder le type de stockage : %v", err)
+		}
 	}
 
 	dir := "data"
