@@ -21,7 +21,14 @@ var (
 		Use:   "crm",
 		Short: "Mini CRM - Gestionnaire de contacts",
 		Long: `Mini CRM est un gestionnaire de contacts en ligne de commande.
-Il permet d'ajouter, lister, mettre à jour et supprimer des contacts.`,
+		Il permet d'ajouter, lister, mettre à jour et supprimer des contacts.
+				
+		Exemple d'utilisation:
+		crm                             # Lance le mode interactif
+		crm add <name> <email>          # Ajoute un contact
+		crm list                        # Liste tous les contacts
+		crm update <id> <name> <email>  # Met à jour un contact
+		crm delete <id>                 # Supprime un contact`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Choix du store via flag --storage (ou valeur par défaut "json")
 			log.Printf("Type de stockage choisi: %s", storageType)
