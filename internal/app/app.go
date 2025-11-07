@@ -31,13 +31,13 @@ func Run(store storage.Storer) {
 
 		switch strings.TrimSpace(input) {
 		case "1":
-			handleNewContact(reader, store)
+			HandleNewContact(reader, store)
 		case "2":
-			listContacts(store)
+			ListContacts(store)
 		case "3":
-			handleUpdateContact(reader, store)
+			HandleUpdateContact(reader, store)
 		case "4":
-			handleDeleteContact(reader, store)
+			HandleDeleteContact(reader, store)
 		case "5":
 			fmt.Println("Au revoir !")
 			return
@@ -60,7 +60,7 @@ func readLine(reader *bufio.Reader) string {
 }
 
 // ------------------------ 1. Create Contact ------------------------
-func handleNewContact(reader *bufio.Reader, store storage.Storer) {
+func HandleNewContact(reader *bufio.Reader, store storage.Storer) {
 	fmt.Print("Nom: ")
 	name := readLine(reader)
 
@@ -82,7 +82,7 @@ func handleNewContact(reader *bufio.Reader, store storage.Storer) {
 }
 
 // ------------------------ 2. Show Contact ------------------------
-func listContacts(store storage.Storer) {
+func ListContacts(store storage.Storer) {
 	contacts, err := store.GetAll()
 	if err != nil {
 		fmt.Println("Erreur :", err)
@@ -101,14 +101,14 @@ func listContacts(store storage.Storer) {
 }
 
 // ------------------------ 3. Update Contact ------------------------
-func handleUpdateContact(reader *bufio.Reader, store storage.Storer) {
+func HandleUpdateContact(reader *bufio.Reader, store storage.Storer) {
 	contacts, _ := store.GetAll()
 	if len(contacts) == 0 {
 		fmt.Println("Aucun contact à mettre à jour")
 		return
 	}
 
-	listContacts(store)
+	ListContacts(store)
 
 	fmt.Print("\nID du contact à mettre à jour: ")
 	id, _ := strconv.Atoi(readLine(reader))
@@ -141,14 +141,14 @@ func handleUpdateContact(reader *bufio.Reader, store storage.Storer) {
 }
 
 // ------------------------ 4. Delete Contact ------------------------
-func handleDeleteContact(reader *bufio.Reader, store storage.Storer) {
+func HandleDeleteContact(reader *bufio.Reader, store storage.Storer) {
 	contacts, _ := store.GetAll()
 	if len(contacts) == 0 {
 		fmt.Println("Aucun contact à supprimer")
 		return
 	}
 
-	listContacts(store)
+	ListContacts(store)
 	fmt.Print("\nID du contact à supprimer: ")
 	id, _ := strconv.Atoi(readLine(reader))
 
