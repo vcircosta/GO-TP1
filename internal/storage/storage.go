@@ -3,9 +3,9 @@ package storage
 import "fmt"
 
 type Contact struct {
-	ID    int
-	Name  string
-	Email string
+	ID    int    `gorm:"primaryKey;autoIncrement"`
+	Name  string `gorm:"size:100;not null"`
+	Email string `gorm:"size:100;not null"`
 }
 
 type Storer interface {
