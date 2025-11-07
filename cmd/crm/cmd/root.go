@@ -14,7 +14,7 @@ import (
 var (
 	dataDir     string
 	storageType string
-	sqliteFile  string
+	fileName    string
 	verbose     bool
 
 	rootCmd = &cobra.Command{
@@ -28,7 +28,8 @@ var (
 		crm add <name> <email>          # Ajoute un contact
 		crm list                        # Liste tous les contacts
 		crm update <id> <name> <email>  # Met à jour un contact
-		crm delete <id>                 # Supprime un contact`,
+		crm delete <id>                 # Supprime un contact
+		crm set-storage <type>          # Change le stockage par défaut`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Choix du store via flag --storage (ou valeur par défaut "json")
 			log.Printf("Type de stockage choisi: %s", storageType)
@@ -42,7 +43,7 @@ var (
 
 			switch storageType {
 			case "gorm":
-				dbPath := filepath.Join(dataDir, sqliteFile)
+				dbPath := filepath.Join(dataDir, fileName)
 				store, err = storage.NewGormStore(dbPath)
 				if err != nil {
 					log.Fatalf("Erreur init GORM store: %v", err)
@@ -73,8 +74,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&dataDir, "data-dir", "data", "répertoire des données")
 	rootCmd.PersistentFlags().StringVar(&storageType, "storage", "json", "type de stockage: json|gorm|memory")
-	rootCmd.PersistentFlags().StringVar(&sqliteFile, "sqlite-file", "contacts.db", "nom du fichier sqlite (utilisé si --storage=gorm)")
+	rootCmd.PersistentFlags().StringVar(&dataDir, "data-dir", "data", "répertoire des données (utilisé si --storage=gorm ou --storage=json)")
+	rootCmd.PersistentFlags().StringVar(&fileName, "file-name", "contacts", "nom du fichier sans l'extension (utilisé si --storage=gorm ou --storage=json)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "mode verbeux")
 }

@@ -5,8 +5,8 @@ Il permet de gérer des contacts avec des fonctionnalités simples : ajout, list
 
 ## Membres du groupe
 
-Elise LABARRERE
-Valentin CIRCOSTA
+- Elise LABARRERE
+- Valentin CIRCOSTA
 
 ## Fonctionnalités
 
@@ -47,32 +47,43 @@ go run ./cmd/crm
 ### Utilisation via les commandes
 
 1. Ajouter un contact
+    - `go run ./cmd/crm add`
+        - Il sera demandé de renseigner un nom et un email pour ce nouvel utilisateur
     - `go run ./cmd/crm add "John Doe" "john@example.com"`
-    - **Paramètre 1** : nom du contact
-    - **Paramètre 2** : email du contact
+        - **Paramètre 1** : nom du contact
+        - **Paramètre 2** : email du contact
 2. Lister tous les contacts
     - `go run ./cmd/crm list`
-    - Cette commande ne prend aucun paramètre.
+        - Cette commande ne prend aucun paramètre.
 3. Mettre à jour un contact
+    - `go run ./cmd/crm update`
+        - La liste des utilisateurs existants sera affiché il faudra choisir l'id de  l'utilisateur à modifier.
+        - Puis il sera demandé de renseigner le nouveau nom et le nouvel email
     - `go run ./cmd/crm update 1 "John Smith" "john.smith@example.com"`
-    - **Paramètre 1** : ID du contact à modifier
-    - **Paramètre 2** : nouveau nom
-    - **Paramètre 3** : nouvel email
+        - **Paramètre 1** : ID du contact à modifier
+        - **Paramètre 2** : nouveau nom
+        - **Paramètre 3** : nouvel email
 4. Supprimer un contact
-    - Exemple avec paramètre : `go run ./cmd/crm delete 1`
-    - **Paramètre 1** : ID du contact à supprimer
+    - `go run ./cmd/crm delete`
+        - La liste des utilisateurs existants sera affiché il faudra choisir l'id de  l'utilisateur à supprimer.
+    - `go run ./cmd/crm delete 1`
+        - **Paramètre 1** : ID du contact à supprimer
+5. Changer le stockage par défaut
+    - `go run ./cmd/crm set-storage`
+        - Un choix sera demandé entre json, gorm, ou memory.
+    - `go run ./cmd/crm set-storage gorm`
+        - **Paramètre 1** : Change le type de stockage par défaut (json, gorm, ou memory).
 
-**Comportement en cas d’exécution :**
-- Si une commande est saisie **sans paramètres**, le programme lance la fonction `handle` correspondante, ce qui affiche le menu interactif (fonctionnement normal).
-- Si une commande comporte un **nombre incorrect de paramètres**, une erreur sur le nombre d'arguments est affiché suivi des utilisations corrects de la commande (avec et dans paramètres).
+Si une commande comporte un **nombre incorrect de paramètres**, une erreur sur le nombre d'arguments est affiché suivi des utilisations corrects de la commande (avec et dans paramètres).
 
 ### Flags
 
-| Option            | Description                                                                   |
-| ----------------- | ----------------------------------------------------------------------------- |
-| `--data-dir`      | Répertoire où stocker les données (`data` par défaut).                        |
-| `--json`          | Active ou non le stockage en fichier JSON (`true` = JSON, `false` = mémoire). |
-| `--verbose`, `-v` | Mode verbeux : affiche plus de détails lors de l’exécution.                   |
+| Option            | Description                                                                    |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `--data-dir`      | Répertoire où stocker les données (`data` par défaut).                         |
+| `--file-name`     | Nom du fichier (sans extension) pour JSON ou SQLite (`contacts` par défaut).   |
+| `--storage`       | Type de stockage par défaut : `json`, `gorm`, ou `memory` (`json` par défaut). |
+| `--verbose`, `-v` | Mode verbeux : affiche plus de détails lors de l’exécution.                    |
 
 ## Tests
 
@@ -85,8 +96,9 @@ go test ./internal/storage -v
 ## Branches Git
 | Branche     | Description                                                                                                                            |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **tp1**     | Programme simple sans persistance (utilise des `map`).                                                                                 |
+| **tp1**     | Programme simple d'un menu de crm.                                                                                                     |
 | **tp2**     | Réorganisation des méthodes (`add`, `update`, `delete`) avec séparation des gestionnaires (`handle`) et des fonctions principales.     |
 | **tp2-bis** | Introduction des **interfaces** pour rendre le programme plus modulaire, évolutif et maintenable.                                      |
 | **tp3**     | Ajout de la **persistance des données en JSON** (la variable `memoryUseJson` dans `main` permet de choisir entre JSON et mémoire).     |
 | **tp3-bis** | Transformation du programme en **CLI avec Cobra** (réorganisation des fichiers + ajout des sous-commandes pour les 4 fonctionnalités). |
+| **tp-4**    | Ajout du storer **GORM** et d'une commande set-storage pour changer le stockage par défaut.                                            |

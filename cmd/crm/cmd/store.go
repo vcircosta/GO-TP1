@@ -4,13 +4,19 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/vcircosta/GO-TP1/internal/storage"
 )
 
 func initStore() storage.Storer {
-	// Récupère les valeurs depuis les flags rootCmd si présents, sinon depuis les env vars, sinon valeurs par défaut.
 	storageType := "json"
+
+	const configFile = "config_storage.txt"
+	if data, err := os.ReadFile(configFile); err == nil {
+		storageType = strings.TrimSpace(string(data))
+	}
+
 	if f := rootCmd.PersistentFlags().Lookup("storage"); f != nil && f.Value.String() != "" {
 		storageType = f.Value.String()
 	} else if v := os.Getenv("CRM_STORAGE_TYPE"); v != "" {
@@ -24,11 +30,11 @@ func initStore() storage.Storer {
 		dir = v
 	}
 
-	sqliteFile := "contacts.db"
-	if f := rootCmd.PersistentFlags().Lookup("sqlite-file"); f != nil && f.Value.String() != "" {
-		sqliteFile = f.Value.String()
-	} else if v := os.Getenv("CRM_SQLITE_FILE"); v != "" {
-		sqliteFile = v
+	fileName := "contacts"
+	if f := rootCmd.PersistentFlags().Lookup("file-name"); f != nil && f.Value.String() != "" {
+		fileName = f.Value.String()
+	} else if v := os.Getenv("CRM_FILE_NAME"); v != "" {
+		fileName = v
 	}
 
 	verboseFlag := false
@@ -36,14 +42,13 @@ func initStore() storage.Storer {
 		verboseFlag = true
 	}
 
-	// assure le répertoire
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		log.Fatalf("Erreur lors de la création du dossier %s: %v", dir, err)
 	}
 
 	switch storageType {
 	case "gorm":
-		dbPath := filepath.Join(dir, sqliteFile)
+		dbPath := filepath.Join(dir, fileName+".db")
 		store, err := storage.NewGormStore(dbPath)
 		if err != nil {
 			log.Fatalf("Erreur lors de l'initialisation du store GORM: %v", err)
@@ -54,7 +59,7 @@ func initStore() storage.Storer {
 		return store
 
 	case "json":
-		jsonFile := filepath.Join(dir, "contacts.json")
+		jsonFile := filepath.Join(dir, fileName+".json")
 		store, err := storage.NewJSONStore(jsonFile)
 		if err != nil {
 			log.Fatalf("Erreur lors de l'initialisation du store JSON: %v", err)

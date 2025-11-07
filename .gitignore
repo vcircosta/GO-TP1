@@ -1,1 +1,2 @@
-data/*.json
+data/
+config_storage.txt
