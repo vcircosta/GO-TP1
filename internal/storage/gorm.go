@@ -14,7 +14,6 @@ func NewGormStore(dbPath string) (*GormStore, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Auto-migrate crée/met à jour la table contacts selon la struct Contact
 	if err := db.AutoMigrate(&Contact{}); err != nil {
 		return nil, err
 	}

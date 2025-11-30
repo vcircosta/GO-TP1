@@ -87,11 +87,12 @@ Si une commande comporte un **nombre incorrect de paramètres**, une erreur sur 
 
 ## Tests
 
-Lancer les tests du mini-CRM (stockage en mémoire + stockage JSON) :
+Lancer les tests du mini-CRM (stockage en mémoire + stockage JSON + stockage gorm) :
 
 ```
 go test ./internal/storage -v
 ```
+Note : lors du test TestGormDelete, un log du type record not found peut apparaître. Ce n’est pas une erreur, c’est simplement GORM qui loggue qu’aucune ligne n’a été trouvée pour l’ID supprimé. Les tests restent valides et passent correctement.
 
 ## Branches Git
 | Branche     | Description                                                                                                                            |
